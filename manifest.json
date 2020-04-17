@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "Timesheet Extension",
+  "version": "0.1",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://dashboard.10up.com/blog/10upper/*"
+      ],
+      "js": ["content.js"]
+    }
+  ],
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs",
+    "https://api.harvestapp.com/*"
+  ]
+}

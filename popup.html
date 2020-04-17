@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+    <title>Timesheet</title>
+    <script src="timesheet.js"></script>
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+<div class="login-wrap">
+    <div class="login-html">
+        <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">TIMESHEET</label>
+        <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">CONFIGURATION</label>
+        <div class="login-form">
+            <div class="sign-in-htm">
+                <div class="group">
+                    <input id="dashboard-button" type="button" class="button" value="View Stats">
+                </div>
+            </div>
+            <div class="sign-up-htm">
+                <div class="group">
+                    <label for="dashboard-id" class="label">Dashboard ID</label>
+                    <input id="dashboard-id" type="text" class="input">
+                </div>
+                <div class="group">
+                    <label for="harvest-id" class="label">HARVEST ACCOUNT ID</label>
+                    <input id="harvest-id" type="text" class="input">
+                </div>
+                <div class="group">
+                    <label for="harvest-api-key" class="label">HARVEST API KEY</label>
+                    <input id="harvest-api-key" type="text" class="input">
+                </div>
+                <div class="group">
+                    <input type="submit" class="button" id="save" value="Save Settings">
+                </div>
+                <p id="status"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
