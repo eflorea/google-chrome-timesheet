@@ -3,8 +3,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const dashboardURL = 'https://dashboard.10up.com/blog/10upper/';
     let dashboardId, harvestId, harvestApiKey;
     var timesheet = {};
+    let startOfWeek = '';
 
-    chrome.storage.sync.get({
+    chrome.storage.local.get({
         dashboardId: '',
         harvestId: '',
         harvestApiKey: ''
@@ -20,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dashboardId = document.getElementById('dashboard-id').value;
         harvestId = document.getElementById('harvest-id').value;
         harvestApiKey = document.getElementById('harvest-api-key').value;
-        chrome.storage.sync.set({
+        chrome.storage.local.set({
             dashboardId: dashboardId,
             harvestId: harvestId,
             harvestApiKey: harvestApiKey,
@@ -34,17 +35,28 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
 
+    const setToMonday = function( date ) {
+        let day = date.getDay() || 7;
+        console.log( day );
+        if ( day === 6 ) {
+            date.setHours( 24 );
+        } else {
+            if ( day !== 1 && day !== 7 ) {
+                date.setHours(-24 * (day - 1));
+            }
+        }
+        console.log( date );
+        return date;
+    };
+
+    const formatDate = function( date ) {
+         return date.getFullYear() + '-' + ( ( date.getMonth() + 1 ) < 10 ? '0' : '' ) + ( date.getMonth() + 1 ) + '-' + ( ( date.getDate() < 10 ) ? '0' : '' ) + date.getDate();
+    };
+
     const getTimesheet = function() {
 
-        var curr = new Date(); // get current date
-        var first = curr.getDate() - curr.getDay() + 1; // First day is the day of the month - the day of the week
-        var last = first + 6; // last day is the first day + 6
-
-        var firstday = new Date(curr.setDate(first));
-        var lastday = new Date(curr.setDate(last));
-
-        const startDate = firstday.getFullYear() + '-' + ( ( firstday.getMonth() + 1 ) < 10 ? '0' : '' ) + ( firstday.getMonth() + 1 ) + '-' + ( ( firstday.getDate() < 10 ) ? '0' : '' ) + firstday.getDate();
-        const endDate   = lastday.getFullYear() + '-' + ( ( lastday.getMonth() + 1 ) < 10 ? '0' : '' ) + ( lastday.getMonth() + 1 ) + '-' + ( ( lastday.getDate() < 10 ) ? '0' : '' ) + lastday.getDate();
+        const startDate = moment( startOfWeek ).startOf('isoWeek').format( "YYYY-MM-DD" )
+        const endDate   = moment( startOfWeek ).add(1, 'weeks').startOf('week').format( "YYYY-MM-DD" )
 
         var xhr = new XMLHttpRequest();
         xhr.withCredentials = true;
@@ -68,8 +80,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 chrome.tabs.query( { active: true, currentWindow: true }, function( tabs ) {
                     const stringTimesheet = JSON.stringify( timesheet );
+                    const weekStart = JSON.stringify( startOfWeek );
                     chrome.tabs.executeScript( tabs[0].id, {
-                        'code': `parseTimesheet(${stringTimesheet})`
+                        'code': `parseTimesheet(${stringTimesheet},${weekStart})`
                     } );
                 } );
             }
@@ -82,19 +95,51 @@ document.addEventListener('DOMContentLoaded', function() {
         xhr.send();
     }
 
-    const checkDashboard = function() {
-        chrome.tabs.query( {
-            'active': true,
-            'currentWindow': true
-        }, function( tabs ) {
-            const regex = new RegExp( dashboardURL );
-            if( ! regex.test( tabs[0].url ) ) {
-                chrome.tabs.create( { 'url': dashboardURL + dashboardId + '/' } );
-            }
-        } );
+    const checkDashboard = function( checkTimesheet ) {
+
+        if ( checkTimesheet ) {
+            chrome.tabs.query({
+                'active': true,
+                'currentWindow': true
+            }, function (tabs) {
+                const url = new URL(tabs[0].url);
+                const arg = url.searchParams.get('week');
+                if (arg) {
+                    startOfWeek = arg;
+                } else {
+                    startOfWeek = moment().format( "YYYY-MM-DD" );
+                }
+
+                if( 0 === moment( startOfWeek ).day() ) {
+                    startOfWeek = moment(startOfWeek).add( 1, 'days' ).format( 'YYYY-MM-DD' );
+                }
+
+                getTimesheet();
+            });
+        }
+
+        if ( dashboardId ) {
+            chrome.tabs.query({
+                'active': true,
+                'currentWindow': true
+            }, function (tabs) {
+                const regex = new RegExp(dashboardURL);
+                if (!regex.test(tabs[0].url)) {
+                    chrome.tabs.create({'url': dashboardURL + dashboardId + '/'});
+                }
+            });
+        } else {
+            document.getElementById( 'tab-2' ).setAttribute( 'checked', 'checked' );
+        }
+
+        document.getElementById('dashboard-id').value    = dashboardId;
+        document.getElementById('harvest-id').value      = harvestId;
+        document.getElementById('harvest-api-key').value = harvestApiKey;
     };
 
     document.getElementById( 'save' ).addEventListener( 'click', saveOptions );
-    document.getElementById( 'dashboard-button' ).addEventListener( 'click', getTimesheet );
+    document.getElementById( 'dashboard-button' ).addEventListener( 'click', function() {
+        checkDashboard( true );
+    } );
 
 }, false);

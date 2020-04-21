@@ -1,0 +1,26 @@
+#mapping_content {
+    padding: 2rem;
+    color: #000;
+    background: #FFF;
+    position: absolute;
+    top:0;
+    left: 0;
+    width: 600px;
+    height: 500px;
+    z-index: 99999;
+    overflow: auto;
+    border: 1rem solid #c8c8c8;
+}
+
+#mapping_content div {
+    margin-bottom: 1rem;
+}
+
+#mapping_content label {
+    display: block;
+}
+
+#mapping_content select {
+    margin-left: 1rem;
+    margin-top: 1rem;
+}
