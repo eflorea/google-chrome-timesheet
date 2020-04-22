@@ -9,7 +9,7 @@
 * Download extension from here: https://github.com/eflorea/google-chrome-timesheet/archive/master.zip and unzip it locally.
 * Turn Developer mode On in Google Chrome: Preferences -> Extensions -> Developer Mode = ON
 * Add the extention to Google: Preferences -> Extensions -> Load unpacked -> choose the unziped folder of the extension
-* You should see the extension in the list of Extensions now and a icon would appear on top right.
+* You should see the extension in the list of Extensions now and an icon would appear on top right.
 * Configure extension - you will need to fill in Dashboard ID, Harvest Account ID and Harvest API Key:
 * * Go to 10up schedule to see your resourcing, the url should looks something like XXX.10up.com/blog/10upper/MYDASHBOARDID/ - copy MYDASHBOARDID value and set it in the extension configuration and save it.
 * * Go to Harvest developers page: https://id.getharvest.com/developers, create new API Token and copy Account ID and Your Token into the extension configuration and save it
