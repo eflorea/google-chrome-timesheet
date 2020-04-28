@@ -1,8 +1,20 @@
 let timesheet = [];
 let startOfWeek;
-let storage_key;
+let storageKey;
 
-const parseTimesheet = function( timeEntries, weekStart ) {
+const getCookie = function( name ) {
+    const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return v ? v[2] : null;
+};
+
+const setCookie = function( name, value, days ) {
+    let d = new Date();
+    d.setTime( d.getTime() + 24 * 60 * 60 * 1000 * days );
+    document.cookie = name + "=" + value + ";path=/;expires=" + d.toGMTString();
+};
+
+const parseTimesheet = function( timeEntries, startDate ) {
+    startOfWeek = startDate;
     // reset everything.
     [].forEach.call(document.querySelectorAll('.employee-client-hours-logged'),function(e){
         e.parentNode.removeChild(e);
@@ -14,8 +26,9 @@ const parseTimesheet = function( timeEntries, weekStart ) {
     } else {
         timesheet = timeEntries;
     }
-    startOfWeek = weekStart;
-    storage_key = 'mapping-' + startOfWeek;
+    console.log( timesheet );
+    setCookie( 'mapping-' + startOfWeek, JSON.stringify( timesheet ), 365 );
+    storageKey = 'mapping-' + startOfWeek;
     let totalHoursLogged = 0;
     let totalHoursMapped = 0;
     timesheet.forEach( function( p ) {
@@ -23,7 +36,7 @@ const parseTimesheet = function( timeEntries, weekStart ) {
     } );
 
     chrome.storage.local.get( {
-        [storage_key]: false,
+        [storageKey]: false,
     }, function( items ) {
 
         resourcing.forEach( function( el, index )  {
@@ -42,15 +55,15 @@ const parseTimesheet = function( timeEntries, weekStart ) {
                         } else {
                             // check mapping.
                             const current_project = p;
-                            if ( items[storage_key]['project[' + project_name.replace( '&amp;', '&' ) + '][]'] ) {
-                                if ( Array.isArray( items[storage_key]['project[' + project_name.replace( '&amp;', '&' ) + '][]'] ) ) {
-                                    items[storage_key]['project[' + project_name.replace( '&amp;', '&' ) + '][]'].forEach( function( map_item ) {
+                            if ( items[storageKey]['project[' + project_name.replace( '&amp;', '&' ) + '][]'] ) {
+                                if ( Array.isArray( items[storageKey]['project[' + project_name.replace( '&amp;', '&' ) + '][]'] ) ) {
+                                    items[storageKey]['project[' + project_name.replace( '&amp;', '&' ) + '][]'].forEach( function( map_item ) {
                                         if ( map_item === 'cp' + current_project.client_id + '-' + current_project.project_id ) {
                                             hours_logged = hours_logged + parseFloat( current_project.hours );
                                         }
                                     } );
                                 } else {
-                                    if( items[storage_key]['project[' + project_name.replace( '&amp;', '&' ) + '][]'] === 'cp' + current_project.client_id + '-' + current_project.project_id ) {
+                                    if( items[storageKey]['project[' + project_name.replace( '&amp;', '&' ) + '][]'] === 'cp' + current_project.client_id + '-' + current_project.project_id ) {
                                         hours_logged = hours_logged + parseFloat( current_project.hours );
                                     }
                                 }
@@ -63,12 +76,12 @@ const parseTimesheet = function( timeEntries, weekStart ) {
                 if ( ! resourcing[index+1] ) {
                     hours_logged = totalHoursLogged;
                     if ( hours_logged != totalHoursMapped ) {
-                        hours_logged = hours_logged + ' mapped: ' + totalHoursMapped;
+                        hours_logged = parseFloat( hours_logged ).toFixed( 2 ) + ' mapped: ' + parseFloat( totalHoursMapped ).toFixed( 2 );
                     }
                 } else {
                     totalHoursMapped += hours_logged;
                 }
-                el.insertAdjacentHTML( 'beforeend', '<div class="employee-cell employee-client-hours-logged">' + hours_logged + '</div>' );
+                el.insertAdjacentHTML( 'beforeend', '<div class="employee-cell employee-client-hours-logged">' + parseFloat( hours_logged ).toFixed( 2 ) + '</div>' );
             }
         } );
     } );
@@ -78,7 +91,7 @@ const mapEntries = function( e ) {
     e.preventDefault();
 
     chrome.storage.local.get( {
-        [storage_key]: {}
+        [storageKey]: {}
     }, function( items ) {
 
         let resourcing = document.querySelectorAll( '.employee-schedule-row' );
@@ -96,15 +109,15 @@ const mapEntries = function( e ) {
                 timesheet.forEach( function( p ) {
                     output += '<option value="cp' + p.client_id + '-' + p.project_id + '"';
                     // check mapping.
-                    if ( items[storage_key]['project[' + project_name + '][]'] ) {
-                        if ( Array.isArray( items[storage_key]['project[' + project_name + '][]'] ) ) {
-                            items[storage_key]['project[' + project_name + '][]'].forEach(function (map_item) {
+                    if ( items[storageKey]['project[' + project_name + '][]'] ) {
+                        if ( Array.isArray( items[storageKey]['project[' + project_name + '][]'] ) ) {
+                            items[storageKey]['project[' + project_name + '][]'].forEach(function (map_item) {
                                 if ( map_item === 'cp' + p.client_id + '-' + p.project_id ) {
                                     output += ' selected';
                                 }
                             });
                         } else {
-                            if( items[storage_key]['project[' + project_name + '][]'] === 'cp' + p.client_id + '-' + p.project_id ) {
+                            if( items[storageKey]['project[' + project_name + '][]'] === 'cp' + p.client_id + '-' + p.project_id ) {
                                 output += ' selected';
                             }
                         }
@@ -135,7 +148,7 @@ const mapEntries = function( e ) {
                 object[key].push(value);
             });
            chrome.storage.local.set( {
-               [storage_key]: object
+               [storageKey]: object
            }, function( items ) {
                parseTimesheet( timesheet, startOfWeek );
            } );
@@ -146,3 +159,38 @@ const mapEntries = function( e ) {
 
     return false;
 };
+
+const init = function() {
+    let startOfWeek;
+    const url = new URL( document.location.href );
+    const arg = url.searchParams.get( 'week' );
+    if ( arg ) {
+        startOfWeek = arg;
+    } else {
+        startOfWeek = moment().format( "YYYY-MM-DD" );
+    }
+
+    if( 0 === moment( startOfWeek ).day() ) {
+        startOfWeek = moment( startOfWeek ).add( 1, 'days' ).format( 'YYYY-MM-DD' );
+    }
+
+    const startDate = moment( startOfWeek ).startOf( 'isoWeek' ).format( 'YYYY-MM-DD' );
+
+    try {
+        const timeSheet = JSON.parse( getCookie( 'mapping-' + startDate ) );
+        if ( timeSheet ) {
+            parseTimesheet( timeSheet, startDate );
+        }
+    } catch ( e ) {
+        // do nothing.
+    }
+};
+
+if (
+    document.readyState === "complete" ||
+    (document.readyState !== "loading" && !document.documentElement.doScroll)
+) {
+    init();
+} else {
+    document.addEventListener("DOMContentLoaded", init);
+}
