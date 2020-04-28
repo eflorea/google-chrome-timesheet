@@ -1,15 +1,10 @@
 # Check 10up resourcing against time logged
+This is a concept tool to check 10up resourcing and time logged in Harvest
 
-## This is a concept tool to check 10up resourcing and time logged in Harvest.
-
-#### Requirements:
-* Your Google Chrome needs to be in developer mode if you want to use a version that is not on the WebStore: https://chrome.google.com/webstore/detail/timesheet-extension/hhelbiolpfjfepihdklgojjhpkgbmfjp?hl=en-US
-
-#### Installation from Chrome Web Store [skip Manual installation if using this step]:
+## Installation from Chrome Web Store [skip Manual installation if using this step]: ##
 https://chrome.google.com/webstore/detail/timesheet-extension/hhelbiolpfjfepihdklgojjhpkgbmfjp?hl=en-US
-
-
-#### Manual installation:
+- - - - 
+## Manual installation: ##
 * Download extension from here: https://github.com/eflorea/google-chrome-timesheet/archive/master.zip and unzip it locally.
 * Turn Developer mode On in Google Chrome: Preferences -> Extensions -> Developer Mode = ON
 ![Developer Mode On](images/developer_mode.png)
@@ -17,7 +12,9 @@ https://chrome.google.com/webstore/detail/timesheet-extension/hhelbiolpfjfepihdk
 ![Add Extension](images/add_extension.png)
 * You should see the extension in the list of Extensions (Timesheet Extension) now and an icon would appear on top right. ![Icon](images/icon.png)
 
-### Configuration
+- - - -
+
+## Configuration ##
 * Configure extension options
     * Extensions -> find Timesheet Extension and click on Details:
     ![Details button](images/extension_details_link.png)
@@ -34,7 +31,9 @@ https://chrome.google.com/webstore/detail/timesheet-extension/hhelbiolpfjfepihdk
 * Save your extension options after you have all the data in.
 ![Extentions Options Save Button](images/extension_options_save.png)
 
-#### Usage:
+- - - -
+
+## Usage: ##
 * Click on the extension icon on the top right ![Icon](images/icon.png) - this will open your resourcing page if you are not there already
 * Click on Refresh Stats and a new column with hours logged will show up (if you already did this once - it will refresh the data for that week).
 ![Refresh Stats](images/popup.png)
@@ -43,4 +42,4 @@ https://chrome.google.com/webstore/detail/timesheet-extension/hhelbiolpfjfepihdk
 ![Mapping](images/mapping.png)
 - - - -
 
-## Good luck and submit your timesheet on time!
+## Good luck and submit your timesheet on time! ##
