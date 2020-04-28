@@ -3,10 +3,13 @@
 ## This is a concept tool to check 10up resourcing and time logged in Harvest.
 
 #### Requirements:
-* Your Google Chrome needs to be in developer mode
+* Your Google Chrome needs to be in developer mode if you want to use a version that is not on the WebStore: https://chrome.google.com/webstore/detail/timesheet-extension/hhelbiolpfjfepihdklgojjhpkgbmfjp?hl=en-US
+
+#### Installation from Chrome Web Store [skip Manual installation if using this step]:
+https://chrome.google.com/webstore/detail/timesheet-extension/hhelbiolpfjfepihdklgojjhpkgbmfjp?hl=en-US
 
 
-#### Installation:
+#### Manual installation:
 * Download extension from here: https://github.com/eflorea/google-chrome-timesheet/archive/master.zip and unzip it locally.
 * Turn Developer mode On in Google Chrome: Preferences -> Extensions -> Developer Mode = ON
 ![Developer Mode On](images/developer_mode.png)

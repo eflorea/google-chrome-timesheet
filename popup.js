@@ -65,30 +65,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const checkDashboard = function( checkTimesheet ) {
 
-        if ( checkTimesheet ) {
-            refreshStatsButton.value = 'Loading...';
-            chrome.tabs.query({
-                'active': true,
-                'currentWindow': true
-            }, function (tabs) {
-                const url = new URL(tabs[0].url);
-                const arg = url.searchParams.get('week');
-                if (arg) {
-                    startOfWeek = arg;
-                } else {
-                    startOfWeek = moment().format( "YYYY-MM-DD" );
-                }
-
-                if( 0 === moment( startOfWeek ).day() ) {
-                    startOfWeek = moment(startOfWeek).add( 1, 'days' ).format( 'YYYY-MM-DD' );
-                }
-
-                getTimesheet();
-                refreshStatsButton.value = 'Refresh Stats';
-            });
-        }
-
         if ( dashboardId ) {
+
             chrome.tabs.query({
                 'active': true,
                 'currentWindow': true
@@ -96,8 +74,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 const regex = new RegExp(dashboardURL);
                 if (!regex.test(tabs[0].url)) {
                     chrome.tabs.create({'url': dashboardURL + dashboardId + '/'});
+                } else {
+                    if ( checkTimesheet ) {
+                        refreshStatsButton.value = 'Loading...';
+                        chrome.tabs.query({
+                            'active': true,
+                            'currentWindow': true
+                        }, function (tabs) {
+                            const url = new URL(tabs[0].url);
+                            const arg = url.searchParams.get('week');
+                            if (arg) {
+                                startOfWeek = arg;
+                            } else {
+                                startOfWeek = moment().format( "YYYY-MM-DD" );
+                            }
+
+                            if( 0 === moment( startOfWeek ).day() ) {
+                                startOfWeek = moment(startOfWeek).add( 1, 'days' ).format( 'YYYY-MM-DD' );
+                            }
+
+                            getTimesheet();
+                            refreshStatsButton.value = 'Refresh Stats';
+                        });
+                    }
                 }
-            });
+            } );
+        } else {
+            chrome.tabs.create({ url: "chrome://extensions/?options=" + chrome.runtime.id }, function() {});
         }
     };
 
