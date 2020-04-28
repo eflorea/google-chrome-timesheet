@@ -50,7 +50,7 @@ const parseTimesheet = function( timeEntries, startDate ) {
                 if ( project ) {
                     const project_name = project.innerHTML;
                     timesheet.forEach( function( p ) {
-                        if ( project_name.replace( '&amp;', '&' ) == p.project.replace( '&amp;', '&' ) ) {
+                        if ( compareNames( project_name, p.project ) ) {
                             hours_logged = p.hours;
                         } else {
                             // check mapping.
@@ -185,6 +185,57 @@ const init = function() {
         // do nothing.
     }
 };
+
+const cleanName = function( name ) {
+    let n = name.replace( /[^A-Za-z\s\-]/g, ' ' );
+    n = n.replace( /\-/g, ' ' );
+    n = n.replace( /\s\s+/g, ' ');
+    let m;
+    let output = '';
+    const regex = /\b\w{4,}/g;
+
+    while ( ( m = regex.exec( n ) ) !== null ) {
+        // This is necessary to avoid infinite loops with zero-width matches
+        if (m.index === regex.lastIndex) {
+            regex.lastIndex++;
+        }
+
+        // The result can be accessed through the `m`-variable.
+        m.forEach( ( match, groupIndex) => {
+            output += ' ' + match;
+        } );
+    }
+
+    output = output.replace( /\s+/g, '' ).toLowerCase();
+
+    return output;
+};
+
+const compareNames = function( original, logged ) {
+  original = cleanName( original );
+  logged = cleanName( logged );
+
+  // hardcoded the company time.
+  if ( 'overhead' === original &&
+     'companytimeplanningbrainstorming' === logged ) {
+      return true;
+  }
+
+  if ( original === logged ) {
+      return true;
+  }
+
+  if ( -1 !== original.indexOf( logged ) ) {
+      return true;
+  }
+
+  if ( -1 !== logged.indexOf( original ) ) {
+      return true;
+  }
+
+  return false;
+};
+
 
 if (
     document.readyState === "complete" ||

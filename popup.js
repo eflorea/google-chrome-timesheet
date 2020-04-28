@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if( this.readyState === 4 ) {
                 const timeEntries = JSON.parse( this.responseText );
                 timeEntries.time_entries.forEach( function( el ) {
+
                     if ( typeof timesheet['cp' + el.client.id + '-' + el.project.id ] !== 'undefined' ) {
                         timesheet['cp' + el.client.id + '-' + el.project.id ].hours = timesheet['cp' + el.client.id + '-' + el.project.id ].hours + parseFloat( el.rounded_hours );
                     } else {
