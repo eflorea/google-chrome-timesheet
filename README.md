@@ -10,7 +10,7 @@ https://chrome.google.com/webstore/detail/timesheet-extension/hhelbiolpfjfepihdk
 ![Developer Mode On](images/developer_mode.png)
 * Add the extension to Google Chrome: Preferences -> Extensions -> Load unpacked -> choose the unziped folder of the extension
 ![Add Extension](images/add_extension.png)
-* You should see the extension in the list of Extensions (Timesheet Extension) now and an icon would appear on top right. ![Icon](images/icon.png)
+* You should see the extension in the list of Extensions (Timesheet Extension) now and an icon would appear on top right. ![Icon](icons/icon48.png)
 
 - - - -
 
@@ -34,7 +34,7 @@ https://chrome.google.com/webstore/detail/timesheet-extension/hhelbiolpfjfepihdk
 - - - -
 
 ## Usage: ##
-* Click on the extension icon on the top right ![Icon](images/icon.png) - this will open your resourcing page if you are not there already
+* Click on the extension icon on the top right ![Icon](icons/icon48.png) - this will open your resourcing page if you are not there already
 * Click on Refresh Stats and a new column with hours logged will show up (if you already did this once - it will refresh the data for that week).
 ![Refresh Stats](images/popup.png)
 ![Timesheet](images/timesheet.png)

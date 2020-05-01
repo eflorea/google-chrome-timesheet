@@ -192,7 +192,7 @@ const cleanName = function( name ) {
     n = n.replace( /\s\s+/g, ' ');
     let m;
     let output = '';
-    const regex = /\b\w{4,}/g;
+    const regex = /\b\w{3,}/g;
 
     while ( ( m = regex.exec( n ) ) !== null ) {
         // This is necessary to avoid infinite loops with zero-width matches
