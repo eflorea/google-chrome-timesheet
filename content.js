@@ -45,9 +45,9 @@ const parseTimesheet = function( timeEntries, startDate ) {
                 document.getElementById( 'mapping' ).addEventListener( 'click', mapEntries );
             } else {
                 // see if we can find the project.
-                const project = el.querySelector( '.employee-client-project' );
+                const project = el.querySelector( '.employee-client-project,.employee-schedule-total-label' );
                 let hours_logged = 0;
-                if ( project ) {
+                if ( project && 'Total' !== project.innerHTML ) {
                     const project_name = project.innerHTML;
                     timesheet.forEach( function( p ) {
                         if ( compareNames( project_name, p.project ) ) {
@@ -58,12 +58,12 @@ const parseTimesheet = function( timeEntries, startDate ) {
                             if ( items[storageKey]['project[' + project_name.replace( '&amp;', '&' ) + '][]'] ) {
                                 if ( Array.isArray( items[storageKey]['project[' + project_name.replace( '&amp;', '&' ) + '][]'] ) ) {
                                     items[storageKey]['project[' + project_name.replace( '&amp;', '&' ) + '][]'].forEach( function( map_item ) {
-                                        if ( map_item === 'cp' + current_project.client_id + '-' + current_project.project_id ) {
+                                        if ( map_item === `cpt${current_project.client_id}-${current_project.project_id}-${current_project.task_id}` ) {
                                             hours_logged = hours_logged + parseFloat( current_project.hours );
                                         }
                                     } );
                                 } else {
-                                    if( items[storageKey]['project[' + project_name.replace( '&amp;', '&' ) + '][]'] === 'cp' + current_project.client_id + '-' + current_project.project_id ) {
+                                    if( items[storageKey]['project[' + project_name.replace( '&amp;', '&' ) + '][]'] === `cpt${current_project.client_id}-${current_project.project_id}-${current_project.task_id}` ) {
                                         hours_logged = hours_logged + parseFloat( current_project.hours );
                                     }
                                 }
@@ -84,7 +84,7 @@ const parseTimesheet = function( timeEntries, startDate ) {
                 el.insertAdjacentHTML( 'beforeend', '<div class="employee-cell employee-client-hours-logged">' + parseFloat( hours_logged ).toFixed( 2 ) + '</div>' );
             }
         } );
-    } );
+	} );
 };
 
 const mapEntries = function( e ) {
@@ -94,35 +94,34 @@ const mapEntries = function( e ) {
         [storageKey]: {}
     }, function( items ) {
 
-        let resourcing = document.querySelectorAll( '.employee-schedule-row' );
+		// get all project names AND any holidays or other extra things resourced to.
+        let resourcing = document.querySelectorAll( '.employee-client-project,.employee-schedule-total-label' );
         let output = '<div id="mapping_content"><form id="form_mapping">';
-        let timesheet_dropdown_options = '';
-        timesheet.forEach( function( p ) {
-            timesheet_dropdown_options += '<option value="cp' + p.client_id + '-' + p.project_id + '">' + p.project.replace( '&amp;', '&' ) + '</option>';
-        } );
         resourcing.forEach( function( el, index )  {
             // see if we can find the project.
-            const project = el.querySelector( '.employee-client-project' );
+            const project = 'Total' !== el.innerHTML ? el : false;
             if ( project ) {
                 const project_name = project.innerHTML.replace( '&amp;', '&' );
                 output += '<div><label>' + project_name + ':</label><select name="project[' + project_name + '][]" multiple size="5">';
                 timesheet.forEach( function( p ) {
-                    output += '<option value="cp' + p.client_id + '-' + p.project_id + '"';
+					output += '<optgroup label="' + p.project.replace( '&amp;', '&' ) + '">';
+                    output += '<option value="' + `cpt${p.client_id}-${p.project_id}-${p.task_id}` + '"';
                     // check mapping.
                     if ( items[storageKey]['project[' + project_name + '][]'] ) {
                         if ( Array.isArray( items[storageKey]['project[' + project_name + '][]'] ) ) {
                             items[storageKey]['project[' + project_name + '][]'].forEach(function (map_item) {
-                                if ( map_item === 'cp' + p.client_id + '-' + p.project_id ) {
+                                if ( map_item === `cpt${p.client_id}-${p.project_id}-${p.task_id}` ) {
                                     output += ' selected';
                                 }
                             });
                         } else {
-                            if( items[storageKey]['project[' + project_name + '][]'] === 'cp' + p.client_id + '-' + p.project_id ) {
+                            if( items[storageKey]['project[' + project_name + '][]'] === `cpt${p.client_id}-${p.project_id}-${p.task_id}` ) {
                                 output += ' selected';
                             }
                         }
                     }
-                    output += '>' + p.project.replace( '&amp;', '&' ) + '</option>';
+					output += '>' + p.task.replace( '&amp;', '&' ) + '</option>';
+					output += '</optgroup>';
                 } );
                 output += '</select></div><br>';
             }

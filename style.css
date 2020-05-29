@@ -51,7 +51,7 @@ table {
 body{
     margin: 0;
     background: #035aa6;
-    padding: 10rem 0;
+    padding: 5rem 0;
     width: 300px;
 }
 
@@ -60,5 +60,15 @@ body{
     display: block;
     padding: 0.5rem;
     border: 1px solid #000;
+    font: 1.5rem console, monospace;
+}
+
+#goto-harvest {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+#goto-harvest a {
+    color: #FFF;
     font: 1.5rem console, monospace;
 }

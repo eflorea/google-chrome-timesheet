@@ -33,14 +33,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 const timeEntries = JSON.parse( this.responseText );
                 timeEntries.time_entries.forEach( function( el ) {
 
-                    if ( typeof timesheet['cp' + el.client.id + '-' + el.project.id ] !== 'undefined' ) {
-                        timesheet['cp' + el.client.id + '-' + el.project.id ].hours = timesheet['cp' + el.client.id + '-' + el.project.id ].hours + parseFloat( el.rounded_hours );
+                    if ( typeof timesheet[`cpt${el.client.id}-${el.project.id}-${el.task.id}`] !== 'undefined' ) {
+                        timesheet[`cpt${el.client.id}-${el.project.id}-${el.task.id}`].hours = timesheet[`cpt${el.client.id}-${el.project.id}-${el.task.id}`].hours + parseFloat( el.rounded_hours );
                     } else {
-                        timesheet['cp' + el.client.id + '-' + el.project.id ] = {
+                        timesheet[`cpt${el.client.id}-${el.project.id}-${el.task.id}`] = {
                             'client': el.client.name,
                             'client_id': el.client.id,
                             'project_id': el.project.id,
                             'project': el.project.name,
+                            'task_id': el.task.id,
+                            'task': el.task.name,
                             'hours': parseFloat( el.rounded_hours )
                         };
                     }

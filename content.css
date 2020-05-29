@@ -4,7 +4,7 @@
     background: #FFF;
     position: absolute;
     top:0;
-    left: 0;
+    left: -100px;
     width: 600px;
     height: 500px;
     z-index: 99999;
@@ -23,4 +23,9 @@
 #mapping_content select {
     margin-left: 1rem;
     margin-top: 1rem;
+    width: 500px;
+}
+
+#mapping_content option {
+    border-bottom: 1px solid #CCC;
 }
